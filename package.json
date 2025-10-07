@@ -12,13 +12,20 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
     "build": "tsc -b && vite build",
-    "lint:eslint": "eslint . --ext ts,tsx --report-unused-disable-directives",
+    "lint:eslint": "eslint . --report-unused-disable-directives",
     "lint:tsc": "tsc --pretty",
-    "lint": "pnpm lint:eslint && pnpm lint:tsc"
+    "lint": "pnpm lint:eslint && pnpm lint:tsc",
+    "dev:test": "concurrently \"TEST_ENV=e2e pnpm run server:watch\" \"pnpm run start\"",
+    "e2e": "pnpm exec playwright test",
+    "e2e:ui": "pnpm exec playwright test --ui",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build",
+    "chromatic": "pnpm chromatic --project-token <your-project-token>"
   },
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
+    "@hello-pangea/dnd": "18.0.1",
     "@mui/icons-material": "7.2.0",
     "@mui/material": "7.2.0",
     "express": "^4.19.2",
@@ -29,7 +36,10 @@
     "react-dom": "19.1.0"
   },
   "devDependencies": {
+    "chromatic": "13.3.0",
     "@eslint/js": "9.34.0",
+    "@playwright/test": "^1.55.1",
+    "@storybook/react-vite": "^9.1.8",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.5.2",
@@ -52,6 +62,8 @@
     "eslint-plugin-vitest": "^0.5.4",
     "globals": "16.3.0",
     "jsdom": "^26.1.0",
+    "start-server-and-test": "^2.0.0",
+    "storybook": "^9.1.8",
     "typescript": "^5.2.2",
     "vite": "^7.0.2",
     "vite-plugin-eslint": "^1.8.1",

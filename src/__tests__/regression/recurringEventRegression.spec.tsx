@@ -5,6 +5,7 @@ import { userEvent } from '@testing-library/user-event';
 import { http, HttpResponse } from 'msw';
 import { SnackbarProvider } from 'notistack';
 import { ReactElement } from 'react';
+import { describe, it, expect, vi } from 'vitest';
 
 import { setupMockHandlerListCreation } from '../../__mocks__/handlersUtils';
 import App from '../../App';

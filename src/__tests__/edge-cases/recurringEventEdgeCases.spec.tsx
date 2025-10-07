@@ -1,6 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { renderHook, act } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
+import { describe, it, expect, vi } from 'vitest';
 
 import RecurringEventDialog from '../../components/RecurringEventDialog';
 import { useRecurringEventOperations } from '../../hooks/useRecurringEventOperations';

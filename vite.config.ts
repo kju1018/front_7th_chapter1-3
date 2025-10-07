@@ -19,6 +19,8 @@ export default mergeConfig(
       globals: true,
       environment: 'jsdom',
       setupFiles: './src/setupTests.ts',
+      include: ['src/**/*.{test,spec}.{ts,tsx}'], // vitest
+      exclude: ['e2e/**', 'node_modules', 'dist'],
       coverage: {
         reportsDirectory: './.coverage',
         reporter: ['lcov', 'json', 'json-summary'],

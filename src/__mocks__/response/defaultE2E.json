@@ -1,0 +1,76 @@
+{
+  "events": [
+    {
+      "id": "2b7545a6-ebee-426c-b906-2329bc8d62bd",
+      "title": "삭제용 데이터 1",
+      "date": "2025-09-01",
+      "startTime": "10:00",
+      "endTime": "11:00",
+      "description": "이 데이터는 삭제용 데이터 입니다.",
+      "location": "회의실 A",
+      "category": "업무",
+      "repeat": { "type": "none", "interval": 0, "endDate": "" },
+      "notificationTime": 1
+    },
+    {
+      "id": "2b7545a7-ebee-426c-b906-2329bc8d62bd",
+      "title": "회의 - 프로젝트 기획",
+      "date": "2025-09-08",
+      "startTime": "09:00",
+      "endTime": "10:00",
+      "description": "신규 프로젝트 기획 회의",
+      "location": "회의실 A",
+      "category": "업무",
+      "repeat": { "type": "none", "interval": 0, "endDate": "" },
+      "notificationTime": 1
+    },
+    {
+      "id": "2b7545a6-ebee-4263-b906-2329bc8d62bd",
+      "title": "점심 약속",
+      "date": "2025-09-08",
+      "startTime": "12:00",
+      "endTime": "13:00",
+      "description": "친구와 점심식사",
+      "location": "레스토랑",
+      "category": "개인",
+      "repeat": { "type": "none", "interval": 0, "endDate": "" },
+      "notificationTime": 1
+    },
+    {
+      "id": "2b7545a6-ebee-426c-b906-2323bc8d62bd",
+      "title": "프레젠테이션 준비",
+      "date": "2025-09-09",
+      "startTime": "14:00",
+      "endTime": "16:00",
+      "description": "내일 발표 준비",
+      "location": "사무실",
+      "category": "업무",
+      "repeat": { "type": "none", "interval": 0, "endDate": "" },
+      "notificationTime": 1
+    },
+    {
+      "id": "2b7545a6-ebee-426c-b906-2329bc8d62ba",
+      "title": "운동",
+      "date": "2025-09-09",
+      "startTime": "19:00",
+      "endTime": "20:30",
+      "description": "헬스장에서 하체",
+      "location": "헬스장",
+      "category": "개인",
+      "repeat": { "type": "none", "interval": 0, "endDate": "" },
+      "notificationTime": 1
+    },
+    {
+      "id": "2b7145a6-ebee-426c-b906-2329bc8d62bd",
+      "title": "팀 회식",
+      "date": "2025-09-10",
+      "startTime": "18:00",
+      "endTime": "21:00",
+      "description": "팀 단합 회식",
+      "location": "한식당",
+      "category": "업무",
+      "repeat": { "type": "none", "interval": 0, "endDate": "" },
+      "notificationTime": 1
+    }
+  ]
+}

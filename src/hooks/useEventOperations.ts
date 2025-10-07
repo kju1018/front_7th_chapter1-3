@@ -37,6 +37,33 @@ export const useEventOperations = (editing: boolean, onSave?: () => void) => {
     }
   };
 
+  const updateEvent = async (eventData: Event | EventForm) => {
+    try {
+      let response;
+      const editingEvent = {
+        ...eventData,
+        repeat: { type: 'none', interval: 0, endDate: '' },
+      };
+
+      response = await fetch(`/api/events/${(eventData as Event).id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(editingEvent),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save event');
+      }
+
+      await fetchEvents();
+      onSave?.();
+      enqueueSnackbar(SUCCESS_MESSAGES.EVENT_UPDATED, { variant: 'success' });
+    } catch (error) {
+      console.error('Error saving event:', error);
+      enqueueSnackbar(ERROR_MESSAGES.SAVE_FAILED, { variant: 'error' });
+    }
+  };
+
   const saveEvent = async (eventData: Event | EventForm) => {
     try {
       let response;
@@ -127,5 +154,5 @@ export const useEventOperations = (editing: boolean, onSave?: () => void) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return { events, fetchEvents, saveEvent, deleteEvent, createRepeatEvent };
+  return { events, fetchEvents, saveEvent, deleteEvent, createRepeatEvent, updateEvent };
 };
