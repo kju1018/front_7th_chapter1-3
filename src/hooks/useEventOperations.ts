@@ -127,5 +127,18 @@ export const useEventOperations = (editing: boolean, onSave?: () => void) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return { events, fetchEvents, saveEvent, deleteEvent, createRepeatEvent };
+  const updateEventOptimistically = (updatedEvent: Event) => {
+    setEvents((prevEvents) =>
+      prevEvents.map((event) => (event.id === updatedEvent.id ? updatedEvent : event))
+    );
+  };
+
+  return {
+    events,
+    fetchEvents,
+    saveEvent,
+    deleteEvent,
+    createRepeatEvent,
+    updateEventOptimistically,
+  };
 };

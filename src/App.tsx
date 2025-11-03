@@ -1,12 +1,11 @@
-import {
-  ChevronLeft,
-  ChevronRight,
-  Close,
-  Delete,
-  Edit,
-  Notifications,
-  Repeat,
-} from '@mui/icons-material';
+import { DndContext, DragEndEvent, DragOverlay, DragStartEvent } from '@dnd-kit/core';
+import ChevronLeft from '@mui/icons-material/ChevronLeft';
+import ChevronRight from '@mui/icons-material/ChevronRight';
+import Close from '@mui/icons-material/Close';
+import Delete from '@mui/icons-material/Delete';
+import Edit from '@mui/icons-material/Edit';
+import Notifications from '@mui/icons-material/Notifications';
+import Repeat from '@mui/icons-material/Repeat';
 import {
   Alert,
   AlertTitle,
@@ -38,6 +37,7 @@ import {
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
 
+import { DroppableTableCell } from './components/DroppableTableCell.tsx';
 import RecurringEventDialog from './components/RecurringEventDialog.tsx';
 import { useCalendarView } from './hooks/useCalendarView.ts';
 import { useEventForm } from './hooks/useEventForm.ts';
@@ -140,10 +140,14 @@ function App() {
     editEvent,
   } = useEventForm();
 
-  const { events, saveEvent, deleteEvent, createRepeatEvent, fetchEvents } = useEventOperations(
-    Boolean(editingEvent),
-    () => setEditingEvent(null)
-  );
+  const {
+    events,
+    saveEvent,
+    deleteEvent,
+    createRepeatEvent,
+    fetchEvents,
+    updateEventOptimistically,
+  } = useEventOperations(Boolean(editingEvent), () => setEditingEvent(null));
 
   const { handleRecurringEdit, handleRecurringDelete } = useRecurringEventOperations(
     events,
@@ -164,6 +168,7 @@ function App() {
   const [pendingRecurringDelete, setPendingRecurringDelete] = useState<Event | null>(null);
   const [recurringEditMode, setRecurringEditMode] = useState<boolean | null>(null); // true = single, false = all
   const [recurringDialogMode, setRecurringDialogMode] = useState<'edit' | 'delete'>('edit');
+  const [activeEvent, setActiveEvent] = useState<Event | null>(null);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -290,6 +295,42 @@ function App() {
     resetForm();
   };
 
+  const handleDragStart = (event: DragStartEvent) => {
+    const draggedEvent = event.active.data.current?.event as Event;
+    setActiveEvent(draggedEvent);
+    setEditingEvent(draggedEvent);
+  };
+
+  const handleDragEnd = async (event: DragEndEvent) => {
+    console.log('DragEnd event:', event);
+    setActiveEvent(null);
+    setEditingEvent(null);
+
+    const { active, over } = event;
+
+    if (!over) return;
+
+    const draggedEvent = active.data.current?.event as Event;
+    const newDate = over.data.current?.date as string;
+
+    if (!draggedEvent || !newDate) return;
+
+    // 같은 날짜면 아무것도 안함
+    if (draggedEvent.date === newDate) return;
+
+    // 낙관적 업데이트: 즉시 UI 업데이트 (사용자에게 즉각적인 피드백)
+    const updatedEvent = { ...draggedEvent, date: newDate };
+    updateEventOptimistically(updatedEvent);
+
+    // 반복 일정인 경우 해당 일정만 수정 (단일 편집 모드)
+    if (isRecurringEvent(draggedEvent)) {
+      await handleRecurringEdit(updatedEvent, true); // true = 해당 일정만 수정
+    } else {
+      // 일반 일정은 기존 방식으로 저장
+      await saveEvent(updatedEvent);
+    }
+  };
+
   const renderWeekView = () => {
     const weekDates = getWeekDates(currentDate);
     return (
@@ -344,7 +385,9 @@ function App() {
                               {/* ! TEST CASE */}
                               {isRepeating && (
                                 <Tooltip
-                                  title={`${event.repeat.interval}${getRepeatTypeLabel(event.repeat.type)}마다 반복${
+                                  title={`${event.repeat.interval}${getRepeatTypeLabel(
+                                    event.repeat.type
+                                  )}마다 반복${
                                     event.repeat.endDate ? ` (종료: ${event.repeat.endDate})` : ''
                                   }`}
                                 >
@@ -379,99 +422,84 @@ function App() {
       <Stack data-testid="month-view" spacing={4} sx={{ width: '100%' }}>
         <Typography variant="h5">{formatMonth(currentDate)}</Typography>
         <TableContainer>
-          <Table sx={{ tableLayout: 'fixed', width: '100%' }}>
-            <TableHead>
-              <TableRow>
-                {weekDays.map((day) => (
-                  <TableCell key={day} sx={{ width: '14.28%', padding: 1, textAlign: 'center' }}>
-                    {day}
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {weeks.map((week, weekIndex) => (
-                <TableRow key={weekIndex}>
-                  {week.map((day, dayIndex) => {
-                    const dateString = day ? formatDate(currentDate, day) : '';
-                    const holiday = holidays[dateString];
-
-                    return (
-                      <TableCell
-                        key={dayIndex}
-                        sx={{
-                          height: '120px',
-                          verticalAlign: 'top',
-                          width: '14.28%',
-                          padding: 1,
-                          border: '1px solid #e0e0e0',
-                          overflow: 'hidden',
-                          position: 'relative',
-                        }}
-                      >
-                        {day && (
-                          <>
-                            <Typography variant="body2" fontWeight="bold">
-                              {day}
-                            </Typography>
-                            {holiday && (
-                              <Typography variant="body2" color="error">
-                                {holiday}
-                              </Typography>
-                            )}
-                            {getEventsForDay(filteredEvents, day).map((event) => {
-                              const isNotified = notifiedEvents.includes(event.id);
-                              const isRepeating = event.repeat.type !== 'none';
-
-                              return (
-                                <Box
-                                  key={event.id}
-                                  sx={{
-                                    p: 0.5,
-                                    my: 0.5,
-                                    backgroundColor: isNotified ? '#ffebee' : '#f5f5f5',
-                                    borderRadius: 1,
-                                    fontWeight: isNotified ? 'bold' : 'normal',
-                                    color: isNotified ? '#d32f2f' : 'inherit',
-                                    minHeight: '18px',
-                                    width: '100%',
-                                    overflow: 'hidden',
-                                  }}
-                                >
-                                  <Stack direction="row" spacing={1} alignItems="center">
-                                    {isNotified && <Notifications fontSize="small" />}
-                                    {/* ! TEST CASE */}
-                                    {isRepeating && (
-                                      <Tooltip
-                                        title={`${event.repeat.interval}${getRepeatTypeLabel(event.repeat.type)}마다 반복${
-                                          event.repeat.endDate
-                                            ? ` (종료: ${event.repeat.endDate})`
-                                            : ''
-                                        }`}
-                                      >
-                                        <Repeat fontSize="small" />
-                                      </Tooltip>
-                                    )}
-                                    <Typography
-                                      variant="caption"
-                                      noWrap
-                                      sx={{ fontSize: '0.75rem', lineHeight: 1.2 }}
-                                    >
-                                      {event.title}
-                                    </Typography>
-                                  </Stack>
-                                </Box>
-                              );
-                            })}
-                          </>
-                        )}
-                      </TableCell>
-                    );
-                  })}
+          <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+            <Table sx={{ tableLayout: 'fixed', width: '100%' }}>
+              <TableHead>
+                <TableRow>
+                  {weekDays.map((day) => (
+                    <TableCell key={day} sx={{ width: '14.28%', padding: 1, textAlign: 'center' }}>
+                      {day}
+                    </TableCell>
+                  ))}
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHead>
+              <TableBody>
+                {weeks.map((week, weekIndex) => (
+                  <TableRow key={weekIndex}>
+                    {week.map((day, dayIndex) => {
+                      const dateString = day ? formatDate(currentDate, day) : '';
+                      const holiday = holidays[dateString];
+                      const filteredEventsForDay: Event[] = day
+                        ? getEventsForDay(filteredEvents, day)
+                        : [];
+
+                      return (
+                        <DroppableTableCell
+                          key={dayIndex}
+                          day={day}
+                          holiday={holiday}
+                          dateString={dateString}
+                          filteredEventsForDay={filteredEventsForDay}
+                          notifiedEvents={notifiedEvents}
+                          getRepeatTypeLabel={getRepeatTypeLabel}
+                        />
+                      );
+                    })}
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+            <DragOverlay>
+              {activeEvent ? (
+                <Box
+                  sx={{
+                    p: 0.5,
+                    backgroundColor: notifiedEvents.includes(activeEvent.id)
+                      ? '#ffebee'
+                      : '#f5f5f5',
+                    borderRadius: 1,
+                    fontWeight: notifiedEvents.includes(activeEvent.id) ? 'bold' : 'normal',
+                    color: notifiedEvents.includes(activeEvent.id) ? '#d32f2f' : 'inherit',
+                    minHeight: '18px',
+                    width: '60px',
+                    overflow: 'hidden',
+                    boxShadow: '0 8px 16px rgba(0,0,0,0.3)',
+                    cursor: 'grabbing',
+                  }}
+                >
+                  <Stack direction="row" spacing={1} alignItems="center">
+                    {notifiedEvents.includes(activeEvent.id) && <Notifications fontSize="small" />}
+                    {activeEvent.repeat.type !== 'none' && (
+                      <Tooltip
+                        title={`${activeEvent.repeat.interval}${getRepeatTypeLabel(activeEvent.repeat.type)}마다 반복${
+                          activeEvent.repeat.endDate ? ` (종료: ${activeEvent.repeat.endDate})` : ''
+                        }`}
+                      >
+                        <Repeat fontSize="small" />
+                      </Tooltip>
+                    )}
+                    <Typography
+                      variant="caption"
+                      noWrap
+                      sx={{ fontSize: '0.75rem', lineHeight: 1.2 }}
+                    >
+                      {activeEvent.title}
+                    </Typography>
+                  </Stack>
+                </Box>
+              ) : null}
+            </DragOverlay>
+          </DndContext>
         </TableContainer>
       </Stack>
     );
@@ -707,7 +735,7 @@ function App() {
           sx={{ width: '30%', height: '100%', overflowY: 'auto' }}
         >
           <FormControl fullWidth>
-            <FormLabel htmlFor="search">일정 검색</FormLabel>
+            <FormLabel htmlFor="search">`일정 검색`</FormLabel>
             <TextField
               id="search"
               size="small"
@@ -728,7 +756,9 @@ function App() {
                       {notifiedEvents.includes(event.id) && <Notifications color="error" />}
                       {event.repeat.type !== 'none' && (
                         <Tooltip
-                          title={`${event.repeat.interval}${getRepeatTypeLabel(event.repeat.type)}마다 반복${
+                          title={`${event.repeat.interval}${getRepeatTypeLabel(
+                            event.repeat.type
+                          )}마다 반복${
                             event.repeat.endDate ? ` (종료: ${event.repeat.endDate})` : ''
                           }`}
                         >
