@@ -56,6 +56,7 @@ import {
 } from './utils/dateUtils.ts';
 import { findOverlappingEvents } from './utils/eventOverlap.ts';
 import { getTimeErrorMessage } from './utils/timeValidation.ts';
+import {getUpdatedEventAfterDrag } from './utils/dragUtils.ts';
 
 const categories = ['업무', '개인', '가족', '기타'];
 
@@ -311,15 +312,8 @@ function App() {
     if (!over) return;
 
     const draggedEvent = active.data.current?.event as Event;
-    const newDate = over.data.current?.date as string;
-
-    if (!draggedEvent || !newDate) return;
-
-    // 같은 날짜면 아무것도 안함
-    if (draggedEvent.date === newDate) return;
-
-    // 낙관적 업데이트: 즉시 UI 업데이트 (사용자에게 즉각적인 피드백)
-    const updatedEvent = { ...draggedEvent, date: newDate };
+    const updatedEvent = getUpdatedEventAfterDrag(event);
+    if (!updatedEvent) return;
     updateEventOptimistically(updatedEvent);
 
     // 반복 일정인 경우 해당 일정만 수정 (단일 편집 모드)
@@ -464,6 +458,7 @@ function App() {
             <DragOverlay>
               {activeEvent ? (
                 <Box
+                  data-testid="drag-overlay"
                   sx={{
                     p: 0.5,
                     backgroundColor: notifiedEvents.includes(activeEvent.id)
