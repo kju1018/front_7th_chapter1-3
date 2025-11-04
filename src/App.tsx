@@ -222,6 +222,11 @@ function App() {
     }
   };
 
+  const handleCellClick = (date: string) => {
+    // 빈 날짜 셀 클릭 시 폼에 해당 날짜 설정
+    setDate(date);
+  };
+
   const addOrUpdateEvent = async () => {
     if (!title || !date || !startTime || !endTime) {
       enqueueSnackbar('필수 정보를 모두 입력해주세요.', { variant: 'error' });
@@ -359,6 +364,7 @@ function App() {
                         filteredEventsForDay={filteredEventsForDay}
                         notifiedEvents={notifiedEvents}
                         getRepeatTypeLabel={getRepeatTypeLabel}
+                        onCellClick={handleCellClick}
                       />
                     );
                   })}
@@ -448,6 +454,7 @@ function App() {
                           filteredEventsForDay={filteredEventsForDay}
                           notifiedEvents={notifiedEvents}
                           getRepeatTypeLabel={getRepeatTypeLabel}
+                          onCellClick={handleCellClick}
                         />
                       );
                     })}

@@ -11,6 +11,7 @@ export function DroppableTableCell({
   filteredEventsForDay,
   notifiedEvents,
   getRepeatTypeLabel,
+  onCellClick,
 }: {
   day: number | null;
   holiday: string;
@@ -18,15 +19,24 @@ export function DroppableTableCell({
   filteredEventsForDay: Event[];
   notifiedEvents: string[];
   getRepeatTypeLabel: (type: RepeatType) => string;
+  onCellClick?: (date: string) => void;
 }) {
   const { setNodeRef, isOver } = useDroppable({
     id: dateString || `empty-${Math.random()}`,
     data: { date: dateString },
   });
 
+  const handleCellClick = (e: React.MouseEvent<HTMLTableCellElement>) => {
+    // 이벤트 박스를 클릭한 경우가 아니라면 (빈 공간 클릭)
+    if (onCellClick && dateString && e.target === e.currentTarget) {
+      onCellClick(dateString);
+    }
+  };
+
   return (
     <TableCell
       ref={setNodeRef}
+      onClick={handleCellClick}
       sx={{
         height: '120px',
         verticalAlign: 'top',
@@ -36,6 +46,7 @@ export function DroppableTableCell({
         overflow: 'hidden',
         position: 'relative',
         backgroundColor: isOver ? '#e3f2fd' : 'transparent',
+        cursor: day ? 'pointer' : 'default',
       }}
     >
       {day && (
