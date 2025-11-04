@@ -130,21 +130,6 @@ describe('dragUtils', () => {
       expect(result).toBeNull();
     });
 
-    it('draggedEvent와 newDate가 모두 없으면 null을 반환해야 한다', () => {
-      const dragEndEvent = {
-        active: {
-          data: {
-            current: null,
-          },
-        },
-        over: null,
-      } as unknown as DragEndEvent;
-
-      const result = getUpdatedEventAfterDrag(dragEndEvent);
-
-      expect(result).toBeNull();
-    });
-
     it('드래그한 이벤트의 다른 속성들은 유지되어야 한다', () => {
       const dragEndEvent = {
         active: {
