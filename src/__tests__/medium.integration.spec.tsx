@@ -498,3 +498,129 @@ it('월간 뷰 선택 후 해당 주에 반복 일정이 존재한다면 해당 
   const eventList = within(screen.getByTestId('event-list'));
   expect(eventList.getAllByText('새 회의')).toHaveLength(2);
 });
+
+describe('날짜 셀 클릭 기능', () => {
+  it('월간 뷰에서 빈 날짜 셀을 클릭하면 해당 날짜가 날짜 입력 필드에 자동으로 채워진다', async () => {
+    const { user } = setup(<App />);
+
+    const monthView = screen.getByTestId('month-view');
+    const cells = within(monthView).getAllByRole('cell');
+    
+    // 날짜가 있는 셀 찾기 (예: "15"가 표시된 셀)
+    const targetCell = cells.find(cell => {
+      const text = cell.textContent;
+      return text && /^15/.test(text);
+    });
+
+    expect(targetCell).toBeDefined();
+    
+    // 날짜 셀 클릭
+    await user.click(targetCell!);
+
+    // 날짜 입력 필드에 해당 날짜가 채워졌는지 확인 (fake time: 2025-10-01)
+    const dateInput = screen.getByLabelText('날짜') as HTMLInputElement;
+    expect(dateInput.value).toBe('2025-10-15');
+  });
+
+  it('주간 뷰에서 빈 날짜 셀을 클릭하면 해당 날짜가 날짜 입력 필드에 자동으로 채워진다', async () => {
+    const { user } = setup(<App />);
+
+    // 주간 뷰로 전환
+    await user.click(within(screen.getByLabelText('뷰 타입 선택')).getByRole('combobox'));
+    await user.click(screen.getByRole('option', { name: 'week-option' }));
+
+    const weekView = screen.getByTestId('week-view');
+    const cells = within(weekView).getAllByRole('cell');
+    
+    // 날짜가 있는 첫 번째 셀 찾기 (2025-10-01은 수요일이므로 해당 주의 일요일부터 시작)
+    const targetCell = cells.find(cell => {
+      const text = cell.textContent;
+      return text && /^1$/.test(text); // 1일 찾기
+    });
+
+    expect(targetCell).toBeDefined();
+    
+    // 날짜 셀 클릭
+    await user.click(targetCell!);
+
+    // 날짜 입력 필드에 날짜가 채워졌는지 확인 (fake time: 2025-10-01)
+    const dateInput = screen.getByLabelText('날짜') as HTMLInputElement;
+    expect(dateInput.value).toBe('2025-10-01');
+  });
+
+  it('날짜 셀을 클릭한 후 일정 정보를 입력하여 해당 날짜에 일정을 추가할 수 있다', async () => {
+    setupMockHandlerCreation();
+
+    const { user } = setup(<App />);
+
+    const monthView = screen.getByTestId('month-view');
+    const cells = within(monthView).getAllByRole('cell');
+    
+    // 날짜 "20"이 표시된 셀 찾기
+    const targetCell = cells.find(cell => {
+      const text = cell.textContent;
+      return text && /^20/.test(text);
+    });
+
+    expect(targetCell).toBeDefined();
+    
+    // 날짜 셀 클릭하여 날짜 자동 입력
+    await user.click(targetCell!);
+
+    // 날짜가 자동으로 채워졌는지 확인 (fake time: 2025-10-01)
+    const dateInput = screen.getByLabelText('날짜') as HTMLInputElement;
+    expect(dateInput.value).toBe('2025-10-20');
+
+    // 나머지 일정 정보 입력
+    await user.type(screen.getByLabelText('제목'), '셀 클릭 테스트 일정');
+    await user.type(screen.getByLabelText('시작 시간'), '10:00');
+    await user.type(screen.getByLabelText('종료 시간'), '11:00');
+    await user.type(screen.getByLabelText('설명'), '테스트 설명');
+    await user.type(screen.getByLabelText('위치'), '테스트 위치');
+    await user.click(screen.getByLabelText('카테고리'));
+    await user.click(within(screen.getByLabelText('카테고리')).getByRole('combobox'));
+    await user.click(screen.getByRole('option', { name: '업무-option' }));
+
+    // 일정 저장
+    await user.click(screen.getByTestId('event-submit-button'));
+
+    // 일정이 추가되었는지 확인 (캘린더와 이벤트 리스트 모두에 표시됨)
+    const addedEvents = await screen.findAllByText('셀 클릭 테스트 일정');
+    expect(addedEvents.length).toBeGreaterThan(0);
+  });
+
+  it('빈 셀을 여러 번 클릭하면 매번 해당 날짜로 변경된다', async () => {
+    const { user } = setup(<App />);
+
+    const monthView = screen.getByTestId('month-view');
+    const cells = within(monthView).getAllByRole('cell');
+    const dateInput = screen.getByLabelText('날짜') as HTMLInputElement;
+    
+    // 첫 번째 날짜 셀 클릭 (15일)
+    const cell15 = cells.find(cell => {
+      const text = cell.textContent;
+      return text && /^15/.test(text);
+    });
+    expect(cell15).toBeDefined();
+    await user.click(cell15!);
+    expect(dateInput.value).toBe('2025-10-15');
+
+    // 두 번째 날짜 셀 클릭 (20일)
+    const cell20 = cells.find(cell => {
+      const text = cell.textContent;
+      return text && /^20/.test(text);
+    });
+    expect(cell20).toBeDefined();
+    await user.click(cell20!);
+    expect(dateInput.value).toBe('2025-10-20');
+
+    // 세 번째 날짜 셀 클릭 (25일)
+    const cell25 = cells.find(cell => {
+      const text = cell.textContent;
+      return text && /^25/.test(text);
+    });
+    expect(cell25).toBeDefined();
+    await user.click(cell25!);
+    expect(dateInput.value).toBe('2025-10-25');
+  });
+});
