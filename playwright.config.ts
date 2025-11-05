@@ -1,7 +1,10 @@
 // playwright.config.ts
 import { defineConfig, devices } from '@playwright/test';
 
+process.env.TEST_ENV = 'e2e';
+
 export default defineConfig({
+  globalSetup: './tests/global-setup.ts',
   testDir: './tests/e2e', // 테스트 파일이 위치할 폴더
   fullyParallel: true,
   retries: 0,
@@ -14,12 +17,10 @@ export default defineConfig({
     video: 'on-first-retry',
   },
 
-  projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-  ],
+  projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
 
   webServer: {
-    command: 'pnpm run dev',
+    command: 'pnpm run dev:e2e',
     url: 'http://localhost:5173',
     reuseExistingServer: !process.env.CI,
   },

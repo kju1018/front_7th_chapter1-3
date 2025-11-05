@@ -8,6 +8,7 @@
     "server:watch": "node --watch server.js",
     "start": "vite",
     "dev": "concurrently \"pnpm run server:watch\" \"pnpm run start\"",
+    "dev:e2e": "cross-env TEST_ENV=e2e concurrently \"pnpm run server:watch\" \"pnpm run start\"",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
@@ -15,8 +16,8 @@
     "lint:eslint": "eslint . --ext ts,tsx --report-unused-disable-directives",
     "lint:tsc": "tsc --pretty",
     "lint": "pnpm lint:eslint && pnpm lint:tsc",
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui",
+    "test:e2e": "cross-env TEST_ENV=e2e playwright test",
+    "test:e2e:ui": "cross-env TEST_ENV=e2e playwright test --ui",
     "test:e2e:report": "playwright show-report"
   },
   "dependencies": {
@@ -49,6 +50,7 @@
     "@vitest/coverage-v8": "^2.0.3",
     "@vitest/ui": "^3.2.4",
     "concurrently": "^8.2.2",
+    "cross-env": "^10.1.0",
     "eslint": "^9.30.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-import": "^2.32.0",
