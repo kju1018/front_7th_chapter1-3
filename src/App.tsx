@@ -95,6 +95,8 @@ function App() {
   const [recurringEditMode, setRecurringEditMode] = useState<boolean | null>(null); // true = single, false = all
   const [recurringDialogMode, setRecurringDialogMode] = useState<'edit' | 'delete'>('edit');
   const [activeEvent, setActiveEvent] = useState<Event | null>(null);
+  const [pendingDraggedEvent, setPendingDraggedEvent] = useState<Event | null>(null);
+  const [originalDraggedEvent, setOriginalDraggedEvent] = useState<Event | null>(null);
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -116,6 +118,58 @@ function App() {
       }
       setIsRecurringDialogOpen(false);
       setPendingRecurringDelete(null);
+    }
+  };
+
+  const handleOverlapDialogClose = () => {
+    setIsOverlapDialogOpen(false);
+    // 드래그 앤 드롭 중이었다면 상태 초기화
+    setPendingDraggedEvent(null);
+    setOriginalDraggedEvent(null);
+  };
+
+  const handleOverlapDialogCancel = () => {
+    setIsOverlapDialogOpen(false);
+    // 드래그 앤 드롭 중이었다면 상태 초기화
+    setPendingDraggedEvent(null);
+    setOriginalDraggedEvent(null);
+  };
+
+  const handleOverlapDialogConfirm = async () => {
+    setIsOverlapDialogOpen(false);
+
+    // 드래그 앤 드롭으로 인한 겹침인 경우
+    if (pendingDraggedEvent && originalDraggedEvent) {
+      updateEventOptimistically(pendingDraggedEvent);
+      
+      // 반복 일정인 경우 해당 일정만 수정 (단일 편집 모드)
+      if (isRecurringEvent(originalDraggedEvent)) {
+        await handleRecurringEdit(pendingDraggedEvent, true);
+      } else {
+        await saveEvent(pendingDraggedEvent);
+      }
+      
+      setEditingEvent(null);
+      setPendingDraggedEvent(null);
+      setOriginalDraggedEvent(null);
+    } else {
+      // 일반 폼에서의 겹침인 경우
+      saveEvent({
+        id: editingEvent ? editingEvent.id : undefined,
+        title,
+        date,
+        startTime,
+        endTime,
+        description,
+        location,
+        category,
+        repeat: {
+          type: isRepeating ? repeatType : 'none',
+          interval: repeatInterval,
+          endDate: repeatEndDate || undefined,
+        },
+        notificationTime,
+      });
     }
   };
 
@@ -235,15 +289,33 @@ function App() {
   const handleDragEnd = async (event: DragEndEvent) => {
     console.log('DragEnd event:', event);
     setActiveEvent(null);
-    setEditingEvent(null);
 
     const { active, over } = event;
 
-    if (!over) return;
+    if (!over) {
+      setEditingEvent(null);
+      return;
+    }
 
     const draggedEvent = active.data.current?.event as Event;
     const updatedEvent = getUpdatedEventAfterDrag(event);
-    if (!updatedEvent) return;
+    if (!updatedEvent) {
+      setEditingEvent(null);
+      return;
+    }
+
+    // 일정 겹침 체크
+    const overlapping = findOverlappingEvents(updatedEvent, events);
+    if (overlapping.length > 0) {
+      // 겹치는 일정이 있으면 원래 이벤트와 수정된 이벤트 저장
+      setOriginalDraggedEvent(draggedEvent);
+      setPendingDraggedEvent(updatedEvent);
+      setOverlappingEvents(overlapping);
+      setIsOverlapDialogOpen(true);
+      return;
+    }
+
+    // 겹침이 없으면 즉시 저장
     updateEventOptimistically(updatedEvent);
 
     // 반복 일정인 경우 해당 일정만 수정 (단일 편집 모드)
@@ -253,6 +325,8 @@ function App() {
       // 일반 일정은 기존 방식으로 저장
       await saveEvent(updatedEvent);
     }
+    
+    setEditingEvent(null);
   };
 
 
@@ -314,7 +388,7 @@ function App() {
         />
       </Stack>
 
-      <Dialog open={isOverlapDialogOpen} onClose={() => setIsOverlapDialogOpen(false)}>
+      <Dialog open={isOverlapDialogOpen} onClose={handleOverlapDialogClose}>
         <DialogTitle>일정 겹침 경고</DialogTitle>
         <DialogContent>
           <DialogContentText>다음 일정과 겹칩니다:</DialogContentText>
@@ -326,29 +400,8 @@ function App() {
           <DialogContentText>계속 진행하시겠습니까?</DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setIsOverlapDialogOpen(false)}>취소</Button>
-          <Button
-            color="error"
-            onClick={() => {
-              setIsOverlapDialogOpen(false);
-              saveEvent({
-                id: editingEvent ? editingEvent.id : undefined,
-                title,
-                date,
-                startTime,
-                endTime,
-                description,
-                location,
-                category,
-                repeat: {
-                  type: isRepeating ? repeatType : 'none',
-                  interval: repeatInterval,
-                  endDate: repeatEndDate || undefined,
-                },
-                notificationTime,
-              });
-            }}
-          >
+          <Button onClick={handleOverlapDialogCancel}>취소</Button>
+          <Button color="error" onClick={handleOverlapDialogConfirm}>
             계속 진행
           </Button>
         </DialogActions>
