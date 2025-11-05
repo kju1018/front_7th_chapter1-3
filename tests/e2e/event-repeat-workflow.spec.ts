@@ -61,8 +61,13 @@ test.describe('기본 일정 관리 워크플로우', () => {
     // 서버에서 반복 일정을 반환한다고 가정
 
     // When: 반복 일정의 편집 버튼 클릭
-    const editButtons = page.getByLabel('Edit event');
-    await editButtons.first().click();
+    const targetCard = page
+      .getByTestId('event-list')
+      .locator('div')
+      .filter({ hasText: '반복일정2025-11-0113:00 - 18:00' });
+
+    const editButton = targetCard.getByRole('button', { name: 'Edit event' });
+    await editButton.click();
 
     // 반복 일정 다이얼로그 표시 확인
     await expect(page.getByText('반복 일정 수정')).toBeVisible();
@@ -80,5 +85,8 @@ test.describe('기본 일정 관리 워크플로우', () => {
 
     // Then: 수정된 위치가 표시됨
     await expect(page.getByText('수정된 위치')).toBeVisible();
+
+    const repeatButton = targetCard.getByTestId('RepeatIcon');
+    await expect(repeatButton).not.toBeVisible();
   });
 });
