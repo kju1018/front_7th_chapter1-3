@@ -1,14 +1,7 @@
 import { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import {
   Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   Stack,
-  Typography,
 } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
@@ -17,6 +10,7 @@ import { CalendarView } from './components/CalendarView.tsx';
 import { EventEditor } from './components/EventEditor.tsx';
 import { EventList } from './components/EventList.tsx';
 import { NotificationAlert } from './components/NotificationAlert.tsx';
+import { OverlapDialog } from './components/OverlapDialog.tsx';
 import RecurringEventDialog from './components/RecurringEventDialog.tsx';
 import { useCalendarView } from './hooks/useCalendarView.ts';
 import { useEventForm } from './hooks/useEventForm.ts';
@@ -119,13 +113,6 @@ function App() {
   };
 
   const handleOverlapDialogClose = () => {
-    setIsOverlapDialogOpen(false);
-    // 드래그 앤 드롭 중이었다면 상태 초기화
-    setPendingDraggedEvent(null);
-    setOriginalDraggedEvent(null);
-  };
-
-  const handleOverlapDialogCancel = () => {
     setIsOverlapDialogOpen(false);
     // 드래그 앤 드롭 중이었다면 상태 초기화
     setPendingDraggedEvent(null);
@@ -385,24 +372,12 @@ function App() {
         />
       </Stack>
 
-      <Dialog open={isOverlapDialogOpen} onClose={handleOverlapDialogClose}>
-        <DialogTitle>일정 겹침 경고</DialogTitle>
-        <DialogContent>
-          <DialogContentText>다음 일정과 겹칩니다:</DialogContentText>
-          {overlappingEvents.map((event) => (
-            <Typography key={event.id} sx={{ ml: 1, mb: 1 }}>
-              {event.title} ({event.date} {event.startTime}-{event.endTime})
-            </Typography>
-          ))}
-          <DialogContentText>계속 진행하시겠습니까?</DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleOverlapDialogCancel}>취소</Button>
-          <Button color="error" onClick={handleOverlapDialogConfirm}>
-            계속 진행
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <OverlapDialog
+        open={isOverlapDialogOpen}
+        onClose={handleOverlapDialogClose}
+        onConfirm={handleOverlapDialogConfirm}
+        overlappingEvents={overlappingEvents}
+      />
 
       <RecurringEventDialog
         open={isRecurringDialogOpen}
