@@ -80,7 +80,7 @@ test.describe('빈 셀 클릭 시 날짜 바인딩 기능', () => {
     await page.getByTestId('event-submit-button').click();
 
     // 일정이 추가되었는지 확인 (이벤트 리스트에서 확인)
-    await expect( page.getByTestId('event-list').getByText('빈 셀 클릭 테스트 일정')).toBeVisible();
+    await expect(page.getByTestId('event-list').getByText('빈 셀 클릭 테스트 일정')).toBeVisible();
     
     // 캘린더에서도 해당 날짜에 일정이 표시되는지 확인
     const eventInCalendar = weekView.getByText('빈 셀 클릭 테스트 일정');
