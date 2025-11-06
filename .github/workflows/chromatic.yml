@@ -1,0 +1,28 @@
+name: Chromatic Visual Tests
+
+on:
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  chromatic:
+    name: Run Chromatic Visual Regression
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      # ✅ 프로젝트 토큰은 GitHub Secrets에서 불러오기
+      - name: Publish to Chromatic
+        env:
+          CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+        run: pnpm chromatic --exit-zero-on-changes
