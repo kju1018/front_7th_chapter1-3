@@ -17,12 +17,7 @@ interface OverlapDialogProps {
   overlappingEvents: Event[];
 }
 
-export function OverlapDialog({
-  open,
-  onClose,
-  onConfirm,
-  overlappingEvents,
-}: OverlapDialogProps) {
+export function OverlapDialog({ open, onClose, onConfirm, overlappingEvents }: OverlapDialogProps) {
   return (
     <Dialog
       open={open}
@@ -35,9 +30,7 @@ export function OverlapDialog({
       <DialogTitle id="overlap-dialog-title">일정 겹침 경고</DialogTitle>
 
       <DialogContent>
-        <DialogContentText id="overlap-dialog-description">
-          다음 일정과 겹칩니다:
-        </DialogContentText>
+        <DialogContentText id="overlap-dialog-description">다음 일정과 겹칩니다:</DialogContentText>
         {overlappingEvents.map((event) => (
           <Typography key={event.id} sx={{ ml: 1, mb: 1 }}>
             {event.title} ({event.date} {event.startTime}-{event.endTime})
@@ -57,4 +50,3 @@ export function OverlapDialog({
     </Dialog>
   );
 }
-

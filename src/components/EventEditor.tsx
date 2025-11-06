@@ -1,4 +1,16 @@
-import { Button, Checkbox, FormControl, FormControlLabel, FormLabel, IconButton, MenuItem, Select, Stack, TextField, Tooltip, Typography } from "@mui/material";
+import {
+  Button,
+  Checkbox,
+  FormControl,
+  FormControlLabel,
+  FormLabel,
+  MenuItem,
+  Select,
+  Stack,
+  TextField,
+  Tooltip,
+  Typography,
+} from '@mui/material';
 
 import { Event, RepeatType } from '../types.ts';
 import { getTimeErrorMessage } from '../utils/timeValidation.ts';

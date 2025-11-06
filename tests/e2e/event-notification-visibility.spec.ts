@@ -5,7 +5,6 @@ import { test, expect } from '@playwright/test';
 
 test.describe('알림 시스템 관련 노출 조건', () => {
   test.beforeEach(async ({ page }) => {
-
     await page.addInitScript(() => {
       let fixedTime = new Date('2025-11-08T09:21:00').getTime();
 
@@ -40,7 +39,6 @@ test.describe('알림 시스템 관련 노출 조건', () => {
   });
 
   test('알림 시간이 도래한 일정에 알림 아이콘이 표시된다', async ({ page }) => {
-
     // When: 09:30에 시작하는 일정 생성 (알림 시간 10분)
     await page.getByLabel('제목').fill('알림 테스트');
     await page.getByLabel('날짜').fill('2025-11-08');
@@ -65,9 +63,11 @@ test.describe('알림 시스템 관련 노출 조건', () => {
 
     // 알림 팝업이 표시되는지 확인
     await expect(page.getByText(/알림 테스트 일정이 시작됩니다/)).toBeVisible();
-    
+
     // 이벤트 리스트에서 알림 아이콘이 표시되는지 확인
-    await expect(page.getByTestId('event-list').locator('[data-testid="NotificationsIcon"]')).toBeVisible();
+    await expect(
+      page.getByTestId('event-list').locator('[data-testid="NotificationsIcon"]')
+    ).toBeVisible();
   });
 
   test('알림이 활성화된 일정은 캘린더에서 다른 색상으로 표시된다.', async ({ page }) => {
@@ -96,17 +96,16 @@ test.describe('알림 시스템 관련 노출 조건', () => {
 
     // Then: 캘린더에서 알림 활성화된 일정이 다른 색상으로 표시되는지 확인
     const eventElement = page.getByText('색상 테스트 일정').first();
-    
-    // 알림 활성화된 일정의 글자색이 '#d32f2f' (빨간색)인지 확인  
+
+    // 알림 활성화된 일정의 글자색이 '#d32f2f' (빨간색)인지 확인
     await expect(eventElement).toHaveCSS('color', 'rgb(211, 47, 47)'); // #d32f2f
-    
+
     // 알림 아이콘이 표시되는지 확인 (여러 방법으로 시도)
     const parentDiv = eventElement.locator('..'); // 한 단계 위로 이동
     const notificationIcon = parentDiv.locator('svg.MuiSvgIcon-root').first();
-    
+
     // 아이콘이 실제로 표시되는지 확인
     await expect(notificationIcon).toBeVisible();
-  
   });
 
   test('알림 팝업이 화면 우상단에 메시지가 표시된다', async ({ page }) => {

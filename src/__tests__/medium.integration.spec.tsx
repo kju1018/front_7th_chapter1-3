@@ -505,15 +505,15 @@ describe('날짜 셀 클릭 기능', () => {
 
     const monthView = screen.getByTestId('month-view');
     const cells = within(monthView).getAllByRole('cell');
-    
+
     // 날짜가 있는 셀 찾기 (예: "15"가 표시된 셀)
-    const targetCell = cells.find(cell => {
+    const targetCell = cells.find((cell) => {
       const text = cell.textContent;
       return text && /^15/.test(text);
     });
 
     expect(targetCell).toBeDefined();
-    
+
     // 날짜 셀 클릭
     await user.click(targetCell!);
 
@@ -531,15 +531,15 @@ describe('날짜 셀 클릭 기능', () => {
 
     const weekView = screen.getByTestId('week-view');
     const cells = within(weekView).getAllByRole('cell');
-    
+
     // 날짜가 있는 첫 번째 셀 찾기 (2025-10-01은 수요일이므로 해당 주의 일요일부터 시작)
-    const targetCell = cells.find(cell => {
+    const targetCell = cells.find((cell) => {
       const text = cell.textContent;
       return text && /^1$/.test(text); // 1일 찾기
     });
 
     expect(targetCell).toBeDefined();
-    
+
     // 날짜 셀 클릭
     await user.click(targetCell!);
 
@@ -555,15 +555,15 @@ describe('날짜 셀 클릭 기능', () => {
 
     const monthView = screen.getByTestId('month-view');
     const cells = within(monthView).getAllByRole('cell');
-    
+
     // 날짜 "20"이 표시된 셀 찾기
-    const targetCell = cells.find(cell => {
+    const targetCell = cells.find((cell) => {
       const text = cell.textContent;
       return text && /^20/.test(text);
     });
 
     expect(targetCell).toBeDefined();
-    
+
     // 날짜 셀 클릭하여 날짜 자동 입력
     await user.click(targetCell!);
 
@@ -595,9 +595,9 @@ describe('날짜 셀 클릭 기능', () => {
     const monthView = screen.getByTestId('month-view');
     const cells = within(monthView).getAllByRole('cell');
     const dateInput = screen.getByLabelText('날짜') as HTMLInputElement;
-    
+
     // 첫 번째 날짜 셀 클릭 (15일)
-    const cell15 = cells.find(cell => {
+    const cell15 = cells.find((cell) => {
       const text = cell.textContent;
       return text && /^15/.test(text);
     });
@@ -606,7 +606,7 @@ describe('날짜 셀 클릭 기능', () => {
     expect(dateInput.value).toBe('2025-10-15');
 
     // 두 번째 날짜 셀 클릭 (20일)
-    const cell20 = cells.find(cell => {
+    const cell20 = cells.find((cell) => {
       const text = cell.textContent;
       return text && /^20/.test(text);
     });
@@ -615,7 +615,7 @@ describe('날짜 셀 클릭 기능', () => {
     expect(dateInput.value).toBe('2025-10-20');
 
     // 세 번째 날짜 셀 클릭 (25일)
-    const cell25 = cells.find(cell => {
+    const cell25 = cells.find((cell) => {
       const text = cell.textContent;
       return text && /^25/.test(text);
     });

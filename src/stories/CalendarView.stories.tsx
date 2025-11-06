@@ -241,7 +241,6 @@ export const MonthViewWithRecurringEvents: Story = {
   },
 };
 
-
 export const WeekViewWithNotificationsAndRecurring: Story = {
   args: {
     view: 'week',
@@ -286,7 +285,6 @@ export const WeekViewWithNotificationsAndRecurring: Story = {
     notifiedEvents: ['14', '15'], // 알림이 온 일정들만 강조
   },
 };
-
 
 export const MonthViewWithNotificationsAndRecurring: Story = {
   args: {

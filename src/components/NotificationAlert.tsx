@@ -16,10 +16,7 @@ interface NotificationAlertProps {
  * @param notifications - 표시할 알림 배열
  * @param onRemoveNotification - 알림 제거 핸들러
  */
-export function NotificationAlert({
-  notifications,
-  onRemoveNotification,
-}: NotificationAlertProps) {
+export function NotificationAlert({ notifications, onRemoveNotification }: NotificationAlertProps) {
   if (notifications.length === 0) {
     return null;
   }
@@ -32,10 +29,7 @@ export function NotificationAlert({
           severity="info"
           sx={{ width: 'auto' }}
           action={
-            <IconButton
-              size="small"
-              onClick={() => onRemoveNotification(index)}
-            >
+            <IconButton size="small" onClick={() => onRemoveNotification(index)}>
               <Close />
             </IconButton>
           }
@@ -46,4 +40,3 @@ export function NotificationAlert({
     </Stack>
   );
 }
-

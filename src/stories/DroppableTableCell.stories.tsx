@@ -319,4 +319,3 @@ export const OverflowingCell: Story = {
     notifiedEvents: ['1', '5'],
   },
 };
-

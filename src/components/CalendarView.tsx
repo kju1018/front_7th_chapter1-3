@@ -137,7 +137,9 @@ export function CalendarView({
                     {notifiedEvents.includes(activeEvent.id) && <Notifications fontSize="small" />}
                     {activeEvent.repeat.type !== 'none' && (
                       <Tooltip
-                        title={`${activeEvent.repeat.interval}${getRepeatTypeLabel(activeEvent.repeat.type)}마다 반복${
+                        title={`${activeEvent.repeat.interval}${getRepeatTypeLabel(
+                          activeEvent.repeat.type
+                        )}마다 반복${
                           activeEvent.repeat.endDate ? ` (종료: ${activeEvent.repeat.endDate})` : ''
                         }`}
                       >
@@ -229,7 +231,9 @@ export function CalendarView({
                     {notifiedEvents.includes(activeEvent.id) && <Notifications fontSize="small" />}
                     {activeEvent.repeat.type !== 'none' && (
                       <Tooltip
-                        title={`${activeEvent.repeat.interval}${getRepeatTypeLabel(activeEvent.repeat.type)}마다 반복${
+                        title={`${activeEvent.repeat.interval}${getRepeatTypeLabel(
+                          activeEvent.repeat.type
+                        )}마다 반복${
                           activeEvent.repeat.endDate ? ` (종료: ${activeEvent.repeat.endDate})` : ''
                         }`}
                       >
@@ -284,4 +288,3 @@ export function CalendarView({
     </Stack>
   );
 }
-

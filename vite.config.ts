@@ -20,14 +20,14 @@ export default mergeConfig(
       environment: 'jsdom',
       globals: true,
       setupFiles: ['./src/setupTests.ts'], // 존재하면 유지
-  
+
       // ✅ Vitest가 테스트 파일로 인식할 대상
       include: [
         'src/**/*.{test,spec}.{ts,tsx}',
         'tests/unit/**/*.{test,spec}.{ts,tsx}',
         'tests/integration/**/*.{test,spec}.{ts,tsx}',
       ],
-  
+
       // ✅ Playwright(E2E) 관련 경로 및 설정 완전 무시
       exclude: [
         'node_modules',
@@ -39,7 +39,7 @@ export default mergeConfig(
         '**/*.e2e.{ts,tsx}',
         'playwright.config.{ts,js}',
       ],
-  
+
       // ✅ 선택: 커버리지 리포트
       coverage: {
         provider: 'v8',

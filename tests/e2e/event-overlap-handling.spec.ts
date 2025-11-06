@@ -31,7 +31,7 @@ test.describe('일정 겹침 처리 방식 테스트', () => {
     await page.getByTestId('event-submit-button').click();
 
     // Then: 겹침 경고 다이얼로그 표시
-  
+
     await expect(page.getByRole('heading', { name: '일정 겹침 경고' })).toBeVisible();
     await expect(page.getByText(/다음 일정과 겹칩니다/)).toBeVisible();
   });
@@ -67,7 +67,9 @@ test.describe('일정 겹침 처리 방식 테스트', () => {
     await expect(page.getByText(/다음 일정과 겹칩니다/)).toBeVisible();
   });
 
-  test('일정 추가시 시간이 겹칠 때 경고가 표시되고 \'계속진행\' 버튼을 클릭하면 일정이 추가된다', async ({ page }) => {
+  test("일정 추가시 시간이 겹칠 때 경고가 표시되고 '계속진행' 버튼을 클릭하면 일정이 추가된다", async ({
+    page,
+  }) => {
     // Given: 기존 일정이 있음
     // When: 겹치는 시간에 새 일정 추가
     await page.getByLabel('제목').fill('겹치는 회의');
@@ -83,9 +85,9 @@ test.describe('일정 겹침 처리 방식 테스트', () => {
     await expect(page.getByRole('heading', { name: '일정 겹침 경고' })).toBeVisible();
     await page.getByRole('button', { name: '계속 진행' }).click();
 
-    const cellWith8 = page.getByRole('cell', { name: '반복일정 겹치는 회의' })
+    const cellWith8 = page.getByRole('cell', { name: '반복일정 겹치는 회의' });
     const events = cellWith8.locator('.MuiBox-root'); // 이벤트 박스들
-    
-    await expect(events).toHaveCount(2);    
+
+    await expect(events).toHaveCount(2);
   });
 });

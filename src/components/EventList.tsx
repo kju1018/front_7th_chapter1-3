@@ -85,9 +85,7 @@ export function EventList({
                     <Tooltip
                       title={`${event.repeat.interval}${getRepeatTypeLabel(
                         event.repeat.type
-                      )}마다 반복${
-                        event.repeat.endDate ? ` (종료: ${event.repeat.endDate})` : ''
-                      }`}
+                      )}마다 반복${event.repeat.endDate ? ` (종료: ${event.repeat.endDate})` : ''}`}
                     >
                       <Repeat fontSize="small" />
                     </Tooltip>
@@ -120,9 +118,8 @@ export function EventList({
                 <Typography>
                   알림:{' '}
                   {
-                    notificationOptions.find(
-                      (option) => option.value === event.notificationTime
-                    )?.label
+                    notificationOptions.find((option) => option.value === event.notificationTime)
+                      ?.label
                   }
                 </Typography>
               </Stack>
@@ -141,4 +138,3 @@ export function EventList({
     </Stack>
   );
 }
-

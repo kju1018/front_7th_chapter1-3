@@ -4,7 +4,6 @@ import { useEventForm } from '../../hooks/useEventForm';
 import { Event } from '../../types';
 
 describe('useEventForm', () => {
-  
   it('반복 일정 이벤트로 초기화하면 반복 관련 값들이 설정되어야 한다', () => {
     const repeatingEvent: Event = {
       id: '2',
@@ -76,4 +75,3 @@ describe('useEventForm', () => {
     });
   });
 });
-

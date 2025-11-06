@@ -1,8 +1,5 @@
 import { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
-import {
-  Box,
-  Stack,
-} from '@mui/material';
+import { Box, Stack } from '@mui/material';
 import { useSnackbar } from 'notistack';
 import { useState } from 'react';
 
@@ -21,7 +18,6 @@ import { useSearch } from './hooks/useSearch.ts';
 import { Event, EventForm } from './types.ts';
 import { findOverlappingEvents } from './utils/eventOverlap.ts';
 import { getUpdatedEventAfterDrag } from './utils/dragUtils.ts';
-
 
 function App() {
   const {
@@ -125,14 +121,14 @@ function App() {
     // 드래그 앤 드롭으로 인한 겹침인 경우
     if (pendingDraggedEvent && originalDraggedEvent) {
       updateEventOptimistically(pendingDraggedEvent);
-      
+
       // 반복 일정인 경우 해당 일정만 수정 (단일 편집 모드)
       if (isRecurringEvent(originalDraggedEvent)) {
         await handleRecurringEdit(pendingDraggedEvent, true);
       } else {
         await saveEvent(pendingDraggedEvent);
       }
-      
+
       setEditingEvent(null);
       setPendingDraggedEvent(null);
       setOriginalDraggedEvent(null);
@@ -309,10 +305,9 @@ function App() {
       // 일반 일정은 기존 방식으로 저장
       await saveEvent(updatedEvent);
     }
-    
+
     setEditingEvent(null);
   };
-
 
   return (
     <Box sx={{ width: '100%', height: '100vh', margin: 'auto', p: 5 }}>
