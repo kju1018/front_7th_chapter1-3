@@ -1,8 +1,5 @@
 import { DragEndEvent, DragStartEvent } from '@dnd-kit/core';
-import Close from '@mui/icons-material/Close';
 import {
-  Alert,
-  AlertTitle,
   Box,
   Button,
   Dialog,
@@ -10,7 +7,6 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  IconButton,
   Stack,
   Typography,
 } from '@mui/material';
@@ -20,6 +16,7 @@ import { useState } from 'react';
 import { CalendarView } from './components/CalendarView.tsx';
 import { EventEditor } from './components/EventEditor.tsx';
 import { EventList } from './components/EventList.tsx';
+import { NotificationAlert } from './components/NotificationAlert.tsx';
 import RecurringEventDialog from './components/RecurringEventDialog.tsx';
 import { useCalendarView } from './hooks/useCalendarView.ts';
 import { useEventForm } from './hooks/useEventForm.ts';
@@ -419,27 +416,12 @@ function App() {
         mode={recurringDialogMode}
       />
 
-      {notifications.length > 0 && (
-        <Stack position="fixed" top={16} right={16} spacing={2} alignItems="flex-end">
-          {notifications.map((notification, index) => (
-            <Alert
-              key={index}
-              severity="info"
-              sx={{ width: 'auto' }}
-              action={
-                <IconButton
-                  size="small"
-                  onClick={() => setNotifications((prev) => prev.filter((_, i) => i !== index))}
-                >
-                  <Close />
-                </IconButton>
-              }
-            >
-              <AlertTitle>{notification.message}</AlertTitle>
-            </Alert>
-          ))}
-        </Stack>
-      )}
+      <NotificationAlert
+        notifications={notifications}
+        onRemoveNotification={(index) => {
+          setNotifications((prev) => prev.filter((_, i) => i !== index));
+        }}
+      />
     </Box>
   );
 }
