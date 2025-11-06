@@ -3,7 +3,7 @@ import path from 'path';
 
 import { test, expect } from '@playwright/test';
 
-test.describe('기본 일정 관리 워크플로우', () => {
+test.describe('반복 일정 관리 워크플로우', () => {
   test.beforeEach(async ({ page }) => {
     const rootDir = process.cwd();
     const mockDir = path.join(rootDir, 'src', '__mocks__', 'response');
@@ -85,8 +85,110 @@ test.describe('기본 일정 관리 워크플로우', () => {
 
     // Then: 수정된 위치가 표시됨
     await expect(page.getByText('수정된 위치')).toBeVisible();
+  });
 
+  test('반복 일정을 단일만 수정할때 반복아이콘이 비활성화되어있다', async ({ page }) => {
+    // Given: 반복 일정이 존재함
+    // 서버에서 반복 일정을 반환한다고 가정
+
+    // When: 반복 일정의 편집 버튼 클릭
+    const targetCard = page
+      .getByTestId('event-list')
+      .locator('div')
+      .filter({ hasText: '반복일정2025-11-0113:00 - 18:00' });
+
+    const editButton = targetCard.getByRole('button', { name: 'Edit event' });
+    await editButton.click();
+
+    // 반복 일정 다이얼로그 표시 확인
+    await expect(page.getByText('반복 일정 수정')).toBeVisible();
+
+    // '해당 일정만' 선택
+    await page.getByRole('button', { name: '예' }).click();
+
+    // 위치 수정
+    const locationInput = page.getByLabel('위치');
+    await locationInput.clear();
+    await locationInput.fill('수정된 위치');
+
+    // 저장
+    await page.getByTestId('event-submit-button').click();
+
+    // Then: 반복아이콘이 비활성화되어있다
     const repeatButton = targetCard.getByTestId('RepeatIcon');
     await expect(repeatButton).not.toBeVisible();
+  });
+
+  test('반복 일정을 수정할 때 반복일정을 모두 수정할 수 있다', async ({ page }) => {
+    // Given: 반복 일정이 존재함
+    // 서버에서 반복 일정을 반환한다고 가정
+
+    // When: 반복 일정의 편집 버튼 클릭
+    const targetCard = page
+      .getByTestId('event-list')
+      .locator('div')
+      .filter({ hasText: '반복일정2025-11-0113:00 - 18:00' });
+
+    const editButton = targetCard.getByRole('button', { name: 'Edit event' });
+    await editButton.click();
+
+    // 반복 일정 다이얼로그 표시 확인
+    await expect(page.getByText('반복 일정 수정')).toBeVisible();
+
+    // '반복일정 모두' 선택
+    await page.getByRole('button', { name: '아니오' }).click();
+
+    // 위치 수정
+    const locationInput = page.getByLabel('위치');
+    await locationInput.clear();
+    await locationInput.fill('수정된 위치');
+
+    // 저장
+    await page.getByTestId('event-submit-button').click();
+
+    // Then: 수정된 위치가 표시됨
+    await expect(page.getByText('수정된 위치')).toHaveCount(5);
+  });
+
+  test('반복 일정을 삭제할 때 반복일정을 1개만 삭제할 수 있다', async ({ page }) => {
+
+    // Given: 반복 일정이 존재함
+    // 서버에서 반복 일정을 반환한다고 가정
+
+    // When: 반복 일정의 삭제 버튼 클릭
+    const targetCard = page
+      .getByTestId('event-list')
+      .locator('div')
+      .filter({ hasText: '반복일정2025-11-0113:00 - 18:00' });
+
+    const deleteButton = targetCard.getByRole('button', { name: 'Delete event' });
+    await deleteButton.click();
+
+    await page.getByRole('button', { name: '예' }).click();
+
+    // Then: 반복일정이 삭제되었다
+    await expect(page.getByText('반복일정2025-11-0113:00 - 18:00')).not.toBeVisible();
+  });
+
+  test('반복 일정을 삭제할 때 반복일정을 모두 삭제할 수 있다', async ({ page }) => {
+
+    // Given: 반복 일정이 존재함
+    // 서버에서 반복 일정을 반환한다고 가정
+
+    // When: 반복 일정의 삭제 버튼 클릭
+    const targetCard = page
+      .getByTestId('event-list')
+      .locator('div')
+      .filter({ hasText: '반복일정2025-11-0113:00 - 18:00' });
+
+    const deleteButton = targetCard.getByRole('button', { name: 'Delete event' });
+    await deleteButton.click();
+
+    await page.getByRole('button', { name: '아니오' }).click();
+
+    // Then: 반복일정이 삭제되었다
+    await expect(page.getByText('반복일정2025-11-0113:00 - 18:00')).not.toBeVisible();
+
+    await expect(page.getByText('반복일정')).not.toBeVisible();
   });
 });
