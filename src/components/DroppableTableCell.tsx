@@ -55,7 +55,16 @@ export function DroppableTableCell({
             {day}
           </Typography>
           {holiday && (
-            <Typography variant="body2" color="error">
+            <Typography
+              variant="body2"
+              color="error"
+              noWrap
+              sx={{
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap',
+              }}
+            >
               {holiday}
             </Typography>
           )}
