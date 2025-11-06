@@ -7,6 +7,7 @@ export default defineConfig({
   globalSetup: './tests/global-setup.ts',
   testDir: './tests/e2e', // 테스트 파일이 위치할 폴더
   fullyParallel: true,
+  workers: 1,
   retries: 0,
   reporter: [['html', { outputFolder: 'playwright-report' }]],
 
