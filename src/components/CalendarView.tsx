@@ -20,6 +20,7 @@ import {
 } from '@mui/material';
 
 import { Event, RepeatType } from '../types.ts';
+import { DroppableTableCell } from './DroppableTableCell.tsx';
 import {
   formatDate,
   formatMonth,
@@ -28,7 +29,6 @@ import {
   getWeekDates,
   getWeeksAtMonth,
 } from '../utils/dateUtils.ts';
-import { DroppableTableCell } from './DroppableTableCell.tsx';
 
 const weekDays = ['일', '월', '화', '수', '목', '금', '토'];
 

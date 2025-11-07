@@ -1,4 +1,5 @@
 import { DragEndEvent } from '@dnd-kit/core';
+
 import type { Event } from '../types.ts';
 
 export const getUpdatedEventAfterDrag = (event: DragEndEvent): Event | null => {

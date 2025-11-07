@@ -1,9 +1,10 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
 import { DndContext } from '@dnd-kit/core';
+import { Table, TableBody, TableRow } from '@mui/material';
+import type { Meta, StoryObj } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
+
 import { DroppableTableCell } from '../components/DroppableTableCell';
 import type { Event, RepeatType } from '../types';
-import { Table, TableBody, TableRow } from '@mui/material';
 
 const meta: Meta<typeof DroppableTableCell> = {
   title: 'Calendar/DroppableTableCell',

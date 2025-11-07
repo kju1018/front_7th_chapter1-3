@@ -6,26 +6,38 @@ import { test, expect } from '@playwright/test';
 test.describe('알림 시스템 관련 노출 조건', () => {
   test.beforeEach(async ({ page }) => {
     await page.addInitScript(() => {
-      let fixedTime = new Date('2025-11-08T09:21:00').getTime();
+      let fixedTime = new Date('2025-11-10T09:21:00').getTime();
 
-      // 완전한 Date 모킹
-      const OriginalDate = Date;
-      (globalThis as any).Date = class extends (OriginalDate as any) {
-        constructor(...args: any[]) {
-          if (args.length === 0) {
-            super(fixedTime);
-          } else {
-            super(...(args as any));
-          }
-        }
-        static now() {
-          return fixedTime;
-        }
-      } as any;
+      // 완전한 Date 모킹 (함수 기반)
+      const OriginalDate = window.Date;
 
-      (globalThis as any).__setNow = (iso: string) => {
-        fixedTime = new Date(iso).getTime();
-        // 강제로 이벤트 발생시켜 리렌더링 유도
+      const MockedDate = function (this: Date, ...args: ConstructorParameters<typeof Date>) {
+        if (args.length === 0) {
+          return new OriginalDate(fixedTime);
+        }
+        return new OriginalDate(...args);
+      } as unknown as typeof Date;
+
+      // 정적 메서드 및 프로퍼티 복사
+      Object.setPrototypeOf(MockedDate, OriginalDate);
+      Object.defineProperty(MockedDate, 'prototype', {
+        value: OriginalDate.prototype,
+        writable: false,
+        enumerable: false,
+        configurable: false,
+      });
+
+      // Date.now(), Date.parse(), Date.UTC() 보존/오버라이드
+      MockedDate.now = (): number => fixedTime;
+      MockedDate.parse = OriginalDate.parse;
+      MockedDate.UTC = OriginalDate.UTC;
+
+      // globalThis에 Date 교체
+      (globalThis as unknown as { Date: typeof Date }).Date = MockedDate;
+
+      // 시간 변경 함수 (선택적: 동적 업데이트 지원)
+      (globalThis as unknown as { __setNow: (iso: string) => void }).__setNow = (iso: string) => {
+        fixedTime = new OriginalDate(iso).getTime();
         window.dispatchEvent(new Event('timechange'));
       };
     });

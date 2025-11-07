@@ -16,8 +16,8 @@ import { useNotifications } from './hooks/useNotifications.ts';
 import { useRecurringEventOperations } from './hooks/useRecurringEventOperations.ts';
 import { useSearch } from './hooks/useSearch.ts';
 import { Event, EventForm } from './types.ts';
-import { findOverlappingEvents } from './utils/eventOverlap.ts';
 import { getUpdatedEventAfterDrag } from './utils/dragUtils.ts';
+import { findOverlappingEvents } from './utils/eventOverlap.ts';
 
 function App() {
   const {

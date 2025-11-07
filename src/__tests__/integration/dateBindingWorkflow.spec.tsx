@@ -4,11 +4,9 @@ import { render, screen, within } from '@testing-library/react';
 import { userEvent } from '@testing-library/user-event';
 import { SnackbarProvider } from 'notistack';
 import { ReactElement } from 'react';
-import { describe, it, expect } from 'vitest';
+import { describe, expect, test } from 'vitest';
 
-import {
-  setupMockHandlerCreation
-} from '../../__mocks__/handlersUtils';
+import { setupMockHandlerCreation } from '../../__mocks__/handlersUtils';
 import App from '../../App';
 
 const theme = createTheme();
@@ -29,7 +27,7 @@ const setup = (element: ReactElement) => {
 
 describe('빈 셀 클릭 시 날짜 바인딩 워크플로우', () => {
   test('월간 뷰에서 빈 날짜 셀을 클릭하면 왼쪽 폼의 날짜 필드에 해당 날짜가 자동으로 설정된다', async () => {
-    const { user } = setup(<App/>);
+    const { user } = setup(<App />);
 
     // Given: 월간 뷰가 표시됨
     const monthView = screen.getByTestId('month-view');
@@ -56,7 +54,7 @@ describe('빈 셀 클릭 시 날짜 바인딩 워크플로우', () => {
     const titleInput = screen.getByLabelText('제목') as HTMLInputElement;
     const startTimeInput = screen.getByLabelText('시작 시간') as HTMLInputElement;
     const endTimeInput = screen.getByLabelText('종료 시간') as HTMLInputElement;
-    
+
     expect(titleInput.value).toBe('');
     expect(startTimeInput.value).toBe('');
     expect(endTimeInput.value).toBe('');
@@ -64,7 +62,7 @@ describe('빈 셀 클릭 시 날짜 바인딩 워크플로우', () => {
 
   test('주간 뷰에서 빈 날짜 셀을 클릭하여 날짜가 설정된 후 일정을 생성하면 해당 날짜에 일정이 추가된다', async () => {
     setupMockHandlerCreation();
-    
+
     const { user } = setup(<App />);
 
     // Given: 주간 뷰로 전환

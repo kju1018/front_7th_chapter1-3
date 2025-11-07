@@ -11,6 +11,7 @@ import {
   Tooltip,
   Typography,
 } from '@mui/material';
+import React from 'react';
 
 import { Event, RepeatType } from '../types.ts';
 import { getTimeErrorMessage } from '../utils/timeValidation.ts';

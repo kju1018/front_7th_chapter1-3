@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-
 import { fn } from 'storybook/test';
+
 import { EventEditor } from '../components/EventEditor';
 
 const meta: Meta<typeof EventEditor> = {

@@ -1,5 +1,6 @@
 import { useDroppable } from '@dnd-kit/core';
 import { TableCell, Typography } from '@mui/material';
+import React from 'react';
 
 import { DraggableEvent } from './DraggableEvent';
 import { Event, RepeatType } from '../types';

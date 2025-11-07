@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-
 import { fn } from 'storybook/test';
+
 import { OverlapDialog } from '../components/OverlapDialog';
 
 const meta: Meta<typeof OverlapDialog> = {
@@ -134,4 +134,3 @@ export const ManyOverlappingEvents: Story = {
     ],
   },
 };
-

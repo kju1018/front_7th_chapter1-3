@@ -1,7 +1,8 @@
-import { describe, it, expect } from 'vitest';
 import { DragEndEvent } from '@dnd-kit/core';
-import { getUpdatedEventAfterDrag } from '../../utils/dragUtils';
+import { describe, it, expect } from 'vitest';
+
 import type { Event } from '../../types';
+import { getUpdatedEventAfterDrag } from '../../utils/dragUtils';
 
 describe('dragUtils', () => {
   describe('getUpdatedEventAfterDrag', () => {
@@ -162,4 +163,3 @@ describe('dragUtils', () => {
     });
   });
 });
-
