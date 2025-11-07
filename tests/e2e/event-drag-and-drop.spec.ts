@@ -6,7 +6,7 @@ import { test, expect } from '@playwright/test';
 test.describe('D&D 기능 테스트', () => {
   test.beforeEach(async ({ page }) => {
     await page.addInitScript(() => {
-      let fixedTime = new Date('2025-11-10T09:21:00').getTime();
+      let fixedTime = new Date('2025-11-21T09:21:00').getTime();
 
       // 완전한 Date 모킹 (함수 기반)
       const OriginalDate = window.Date;
@@ -151,6 +151,7 @@ test.describe('D&D 기능 테스트', () => {
     const eventBox = cellWith18.locator('.MuiBox-root').first(); // 첫 번째 이벤트 박스
 
     // 반복 아이콘(Repeat SVG)이 존재하지 않는지 확인
+
     await expect(eventBox.locator('svg')).toHaveCount(0);
   });
 });

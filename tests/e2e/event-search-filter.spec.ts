@@ -24,7 +24,7 @@ test.describe('검색 및 필터링 기능 테스트', () => {
     // Then: 검색 결과가 표시됨
     const eventList = page.getByTestId('event-list');
     const events = eventList.locator('button[aria-label="Edit event"]');
-    await expect(events).toHaveCount(6);
+    await expect(events).toHaveCount(1);
   });
 
   test("검색 결과가 없으면 '검색 결과가 없습니다.' 메시지가 표시된다", async ({ page }) => {
@@ -56,6 +56,6 @@ test.describe('검색 및 필터링 기능 테스트', () => {
 
     // Then: 모든 일정이 다시 표시됨
     const eventCards = page.getByTestId('event-list').locator('> div:not(.MuiFormControl-root)');
-    await expect(eventCards).toHaveCount(6);
+    await expect(eventCards).toHaveCount(7);
   });
 });

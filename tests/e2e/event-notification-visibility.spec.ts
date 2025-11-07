@@ -6,7 +6,7 @@ import { test, expect } from '@playwright/test';
 test.describe('알림 시스템 관련 노출 조건', () => {
   test.beforeEach(async ({ page }) => {
     await page.addInitScript(() => {
-      let fixedTime = new Date('2025-11-10T09:21:00').getTime();
+      let fixedTime = new Date('2025-11-08T09:21:00').getTime();
 
       // 완전한 Date 모킹 (함수 기반)
       const OriginalDate = window.Date;
